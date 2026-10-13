@@ -1,0 +1,683 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--navbar-height) - 2.5rem);
+  gap: 1rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0.5rem 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.25rem;
+}
+
+.header h1 {
+  font-size: 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.clearBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.clearBtn:hover {
+  background: var(--surface-hover);
+  color: var(--danger);
+  border-color: rgba(247, 118, 142, 0.3);
+}
+
+.chatWrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  position: relative;
+  min-height: 400px;
+}
+
+.chatArea {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.chatArea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chatArea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chatArea::-webkit-scrollbar-thumb {
+  background: var(--border-heavy);
+  border-radius: 3px;
+}
+
+/* Greeting State */
+.greetingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: auto;
+  max-width: 750px;
+  padding: 1.5rem 1rem;
+}
+
+.greetingIcon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+.greetingContainer h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.75rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.greetingContainer p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.suggestedPrompts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.suggestedPromptCard {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-left: 3px solid var(--border-heavy);
+}
+
+.suggestedPromptCard:hover {
+  background: var(--surface-hover);
+  border-color: var(--primary);
+  border-left-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(122, 162, 247, 0.1);
+}
+
+/* Message Bubbles */
+.messageRow {
+  display: flex;
+  width: 100%;
+}
+
+.messageRowUser {
+  justify-content: flex-end;
+}
+
+.messageRowAssistant {
+  justify-content: flex-start;
+}
+
+.messageBubble {
+  max-width: 85%;
+  padding: 0.85rem 1.15rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  word-wrap: break-word;
+  box-shadow: var(--shadow-sm);
+}
+
+.messageBubbleUser {
+  background: linear-gradient(135deg, var(--primary), #5a82fc);
+  color: #0d0e12;
+  font-weight: 500;
+  border-bottom-right-radius: 2px;
+}
+
+.messageBubbleAssistant {
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  border: 1px solid var(--border-heavy);
+  border-bottom-left-radius: 2px;
+}
+
+.messageBubbleAssistant p {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.messageBubbleAssistant p:last-child {
+  margin-bottom: 0;
+}
+
+.messageBubbleAssistant ul, .messageBubbleAssistant ol {
+  margin-left: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.messageBubbleAssistant li {
+  margin-bottom: 0.25rem;
+}
+
+.messageBubbleAssistant h3 {
+  font-size: 1.05rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.35rem;
+  color: var(--primary);
+}
+
+.messageBubbleAssistant h4 {
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+  color: var(--secondary);
+}
+
+.messageBubbleAssistant code {
+  font-family: monospace;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.1rem 0.3rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+}
+
+.messageBubbleAssistant blockquote {
+  border-left: 3px solid var(--primary);
+  background: rgba(122, 162, 247, 0.05);
+  padding: 0.5rem 0.75rem;
+  margin: 0.5rem 0;
+  font-style: italic;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* Input Area */
+.inputForm {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.15rem;
+  background: var(--surface-raised);
+  border-top: 1px solid var(--border);
+}
+
+.textInput {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border-heavy);
+  color: var(--text-primary);
+  padding: 0.75rem 1.15rem;
+  border-radius: 24px;
+  font-size: 0.92rem;
+  transition: var(--transition);
+}
+
+.textInput:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(122, 162, 247, 0.15);
+  background: var(--surface);
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: var(--transition);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.micBtn {
+  background: var(--surface);
+}
+
+.micBtn:hover {
+  background: var(--surface-hover);
+  color: var(--secondary);
+  border-color: var(--secondary);
+}
+
+.micBtnActive {
+  background: rgba(247, 118, 142, 0.15);
+  color: var(--danger) !important;
+  border-color: var(--danger) !important;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(247, 118, 142, 0.4); }
+  70% { transform: scale(1.08); box-shadow: 0 0 0 10px rgba(247, 118, 142, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(247, 118, 142, 0); }
+}
+
+.sendBtn {
+  background: var(--primary);
+  color: #0d0e12;
+  border: none;
+}
+
+.sendBtn:hover {
+  background: var(--primary-hover);
+  transform: scale(1.05);
+}
+
+.sendBtn:disabled {
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  transform: none;
+  border: 1px solid var(--border);
+}
+
+/* Typing Indicator */
+.typingIndicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.5rem 0.25rem;
+}
+
+.typingIndicator span {
+  width: 6px;
+  height: 6px;
+  background-color: var(--text-secondary);
+  border-radius: 50%;
+  display: inline-block;
+  animation: bounce 1.4s infinite both;
+}
+
+.typingIndicator span:nth-child(1) { animation-delay: -0.32s; }
+.typingIndicator span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+/* ── AI SMART SUBSCRIPTION COACH STYLES ── */
+
+.coachHero {
+  background: linear-gradient(135deg, rgba(122, 162, 247, 0.08), rgba(187, 154, 247, 0.04));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.coachHero h2 {
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.coachHeroSubtitle {
+  font-size: 0.95rem;
+  color: var(--secondary);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.coachHeroDesc {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  max-width: 550px;
+  margin: 0 auto 1.5rem auto;
+}
+
+.coachHeroBtn {
+  background: linear-gradient(135deg, var(--primary), #5a82fc);
+  color: #0d0e12;
+  font-weight: 700;
+  padding: 0.75rem 2rem;
+  border-radius: 24px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 15px rgba(122, 162, 247, 0.25);
+  transition: var(--transition);
+}
+
+.coachHeroBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(122, 162, 247, 0.35);
+  background: linear-gradient(135deg, var(--primary-hover), #4b73eb);
+}
+
+.coachReport {
+  margin-top: 0.75rem;
+  background: rgba(13, 14, 18, 0.4);
+  border: 1px solid var(--border-heavy);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.coachGoal {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.coachGoalIcon {
+  font-size: 1.75rem;
+}
+
+.coachGoal h3 {
+  margin: 0 !important;
+  font-size: 0.75rem !important;
+  color: var(--text-muted, #565f89) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.coachGoal p {
+  margin: 0 !important;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.coachOverviewGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+@media (min-width: 600px) {
+  .coachOverviewGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.coachMetric {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.coachMetricLabel {
+  font-size: 0.72rem;
+  color: var(--text-muted, #565f89);
+}
+
+.coachMetricValue {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.coachMetricValue.optimized {
+  color: var(--secondary);
+}
+
+.coachMetricValue.saving {
+  color: var(--primary);
+}
+
+/* Spending Visualization Progress Section */
+.coachProgressSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+}
+
+.coachProgressSection h4 {
+  margin: 0 0 0.25rem 0 !important;
+  font-size: 0.9rem !important;
+  color: var(--text-secondary) !important;
+}
+
+.progressBarWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.progressLabel {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.progressTrack {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  height: 24px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border);
+}
+
+.progressBar {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 0.75rem;
+  border-radius: 5px;
+  transition: width 1s ease-in-out;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #0d0e12;
+}
+
+.currentBar {
+  background: linear-gradient(90deg, #f7768e, #ff9e64);
+}
+
+.projectedBar {
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+}
+
+/* Recommended Actions */
+.coachRecSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.coachRecSection h4 {
+  margin: 0 !important;
+  font-size: 0.9rem !important;
+  color: var(--text-secondary) !important;
+}
+
+.recGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.recCard {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-left: 4px solid var(--primary);
+  transition: var(--transition);
+}
+
+.recCard:hover {
+  transform: translateX(2px);
+  border-color: rgba(122, 162, 247, 0.4);
+}
+
+.recCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.recCardTitle {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.recConfidence {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.confHigh {
+  background: rgba(158, 206, 106, 0.15);
+  color: #9ece6a;
+  border: 1px solid rgba(158, 206, 106, 0.3);
+}
+
+.confMedium {
+  background: rgba(224, 175, 104, 0.15);
+  color: #e0af68;
+  border: 1px solid rgba(224, 175, 104, 0.3);
+}
+
+.confLow {
+  background: rgba(247, 118, 142, 0.15);
+  color: #f7768e;
+  border: 1px solid rgba(247, 118, 142, 0.3);
+}
+
+.recCardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.recTargetDetail {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.recTargetName {
+  font-weight: 600;
+  color: var(--secondary);
+}
+
+.recSaving {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.recReason {
+  margin: 0 !important;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.recApplyBtn {
+  background: rgba(122, 162, 247, 0.08);
+  color: var(--primary);
+  border: 1px solid rgba(122, 162, 247, 0.2);
+  padding: 0.45rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.recApplyBtn:hover {
+  background: var(--primary);
+  color: #0d0e12;
+  border-color: var(--primary);
+}
+
+/* Interactive Option Buttons */
+.optionsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.optionBtn {
+  background: var(--surface-raised);
+  border: 1px solid var(--border-heavy);
+  color: var(--text-primary);
+  padding: 0.4rem 1rem;
+  border-radius: 18px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.optionBtn:hover {
+  background: var(--primary);
+  color: #0d0e12;
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}

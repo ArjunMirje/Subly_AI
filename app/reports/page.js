@@ -160,6 +160,7 @@ function generateBarChartCanvas(subscriptions) {
 export default function Reports() {
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState(null);
+  const [comparisonPeriod, setComparisonPeriod] = useState('last_month');
 
   const handleExportCSV = () => {
     window.location.href = '/api/export';
@@ -170,11 +171,22 @@ export default function Reports() {
       setGenerating(true);
       setError(null);
 
-      // Fetch actual Supabase user records & profiles
-      const [userRes, subRes, couponRes] = await Promise.all([
+      // Fetch actual Supabase user records, profiles, and AI Financial Insights concurrently
+      const [userRes, subRes, couponRes, aiRes] = await Promise.all([
         fetch('/api/auth/me'),
         fetch('/api/subscriptions'),
-        fetch('/api/coupons')
+        fetch('/api/coupons'),
+        fetch('/api/subbot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            generateReportInsights: true,
+            comparisonPeriod: comparisonPeriod
+          })
+        }).catch(err => {
+          console.error("AI Insights fetch failed:", err);
+          return { ok: false };
+        })
       ]);
 
       if (!userRes.ok || !subRes.ok || !couponRes.ok) {
@@ -184,6 +196,16 @@ export default function Reports() {
       const user = await parseJsonResponse(userRes, '/api/auth/me');
       const allSubscriptions = await parseJsonResponse(subRes, '/api/subscriptions');
       const coupons = await parseJsonResponse(couponRes, '/api/coupons');
+
+      let aiSummary = "AI Financial Insights could not be generated at this time. Please check your network connection and configuration.";
+      if (aiRes && aiRes.ok) {
+        try {
+          const aiData = await aiRes.json();
+          if (aiData.summary) {
+            aiSummary = aiData.summary;
+          }
+        } catch (_) {}
+      }
 
 
       // Data Processing
@@ -313,27 +335,27 @@ doc.setFont('Roboto', 'normal');
 
       // Title
       doc.setTextColor(255, 255, 255);
-      doc.setFont('helvetica', 'bold');
+      doc.setFont('Roboto', 'bold');
       doc.setFontSize(22);
       doc.text('MONTHLY SUBSCRIPTION REPORT', 15, 22);
 
       // Sub-tag
-      doc.setFont('helvetica', 'normal');
+      doc.setFont('Roboto', 'normal');
       doc.setFontSize(10);
       doc.text('Smart insights on your recurring spending.', 15, 29);
 
       // Date stamp
-      doc.setFont('helvetica', 'normal');
+      doc.setFont('Roboto', 'normal');
       doc.setFontSize(10);
       doc.text(`Generated: ${new Date().toLocaleDateString('en-IN')}`, 155, 22);
 
       // Metadata area
       doc.setTextColor(13, 14, 18);
-      doc.setFont('helvetica', 'bold');
+      doc.setFont('Roboto', 'bold');
       doc.setFontSize(11);
       doc.text('ACCOUNT SUMMARY', 15, 48);
 
-      doc.setFont('helvetica', 'normal');
+      doc.setFont('Roboto', 'normal');
       doc.setFontSize(9.5);
       doc.text(`Username: ${user.name || 'N/A'}`, 15, 54);
       doc.text(`Email Address: ${user.email || 'N/A'}`, 15, 60);
@@ -353,12 +375,12 @@ doc.setFont('Roboto', 'normal');
         doc.rect(boxX, 68, 42, 20, 'FD');
 
         doc.setTextColor(122, 162, 247);
-        doc.setFont('helvetica', 'bold');
+        doc.setFont('Roboto', 'bold');
         doc.setFontSize(11.5);
         doc.text(stat.value, boxX + 4, 76);
 
         doc.setTextColor(86, 95, 137);
-        doc.setFont('helvetica', 'normal');
+        doc.setFont('Roboto', 'normal');
         doc.setFontSize(8.5);
         doc.text(stat.label, boxX + 4, 83);
 
@@ -367,7 +389,7 @@ doc.setFont('Roboto', 'normal');
 
       // Category breakdown table
       doc.setTextColor(13, 14, 18);
-      doc.setFont('helvetica', 'bold');
+      doc.setFont('Roboto', 'bold');
       doc.setFontSize(11);
       doc.text('Category Breakdown', 15, 98);
 
@@ -382,14 +404,14 @@ doc.setFont('Roboto', 'normal');
         head: [['Category', 'Monthly Allocation']],
         body: categoryRows,
         theme: 'striped',
-        headStyles: { fillColor: [122, 162, 247], textColor: [255, 255, 255] },
-        styles: { fontSize: 8.5, cellPadding: 2 }
+        headStyles: { font: 'Roboto', fillColor: [122, 162, 247], textColor: [255, 255, 255] },
+        styles: { font: 'Roboto', fontSize: 8.5, cellPadding: 2 }
       });
 
       // Render category distribution graph
       const nextY = doc.lastAutoTable.finalY + 8;
       doc.setTextColor(13, 14, 18);
-      doc.setFont('helvetica', 'bold');
+      doc.setFont('Roboto', 'bold');
       doc.setFontSize(11);
       doc.text('Category Spending Allocation (Pie Chart)', 15, nextY);
 
@@ -403,13 +425,13 @@ doc.setFont('Roboto', 'normal');
       doc.setFillColor(122, 162, 247);
       doc.rect(0, 0, 210, 12, 'F');
       doc.setTextColor(255, 255, 255);
-      doc.setFont('helvetica', 'bold');
+      doc.setFont('Roboto', 'bold');
       doc.setFontSize(9);
       doc.text('SUBLY MONTHLY SUBSCRIPTION REPORT', 15, 8);
 
       // Monthly expenses bar chart
       doc.setTextColor(13, 14, 18);
-      doc.setFont('helvetica', 'bold');
+      doc.setFont('Roboto', 'bold');
       doc.setFontSize(11);
       doc.text('Monthly Subscription Cost Analysis (Top 5)', 15, 22);
 
@@ -418,7 +440,7 @@ doc.setFont('Roboto', 'normal');
 
       // Subscriptions summary table
       doc.setTextColor(13, 14, 18);
-      doc.setFont('helvetica', 'bold');
+      doc.setFont('Roboto', 'bold');
       doc.setFontSize(11);
       doc.text('Subscription Summary Detail', 15, 115);
 
@@ -440,8 +462,8 @@ doc.setFont('Roboto', 'normal');
         head: [['Service', 'Cost', 'Billing Cycle', 'Next Renewal', 'AutoPay Status']],
         body: subTableRows,
         theme: 'grid',
-        headStyles: { fillColor: [187, 154, 247], textColor: [255, 255, 255] },
-        styles: { fontSize: 8.5, cellPadding: 2 }
+        headStyles: { font: 'Roboto', fillColor: [187, 154, 247], textColor: [255, 255, 255] },
+        styles: { font: 'Roboto', fontSize: 8.5, cellPadding: 2 }
       });
 
       // ── PAGE 3: RENEWALS & COUPONS & AUTOPAY ──
@@ -451,34 +473,34 @@ doc.setFont('Roboto', 'normal');
       doc.setFillColor(122, 162, 247);
       doc.rect(0, 0, 210, 12, 'F');
       doc.setTextColor(255, 255, 255);
-      doc.setFont('helvetica', 'bold');
+      doc.setFont('Roboto', 'bold');
       doc.setFontSize(9);
       doc.text('SUBLY MONTHLY SUBSCRIPTION REPORT', 15, 8);
 
       // Upcoming renewals header
       doc.setTextColor(13, 14, 18);
-      doc.setFont('helvetica', 'bold');
+      doc.setFont('Roboto', 'bold');
       doc.setFontSize(11);
       doc.text('Upcoming Renewals Timeline', 15, 22);
 
       let renewY = 28;
 
       const drawPdfRenewList = (title, list, colorHex) => {
-        doc.setFont('helvetica', 'bold');
+        doc.setFont('Roboto', 'bold');
         doc.setFontSize(9.5);
         doc.setTextColor(colorHex);
         doc.text(title, 15, renewY);
         renewY += 5;
 
         if (list.length === 0) {
-          doc.setFont('helvetica', 'italic');
+          doc.setFont('Roboto', 'normal');
           doc.setFontSize(8.5);
           doc.setTextColor(120, 120, 120);
           doc.text('No renewals registered for this period.', 20, renewY);
           renewY += 7;
         } else {
           list.forEach(sub => {
-            doc.setFont('helvetica', 'normal');
+            doc.setFont('Roboto', 'normal');
             doc.setFontSize(9);
             doc.setTextColor(13, 14, 18);
             doc.text(`• ${sub.name} - renewing on ${sub.renewalDate} (Cost: ₹${parseFloat(sub.cost).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`, 20, renewY);
@@ -494,14 +516,14 @@ doc.setFont('Roboto', 'normal');
 
       // AutoPay Summary section
       renewY += 4;
-      doc.setFont('helvetica', 'bold');
+      doc.setFont('Roboto', 'bold');
       doc.setFontSize(11);
       doc.setTextColor(13, 14, 18);
       doc.text('AutoPay Renewal Tracker', 15, renewY);
       renewY += 5.5;
 
       const autopaySubs = activeSubs.filter(s => s.autopayEnabled);
-      doc.setFont('helvetica', 'normal');
+      doc.setFont('Roboto', 'normal');
       doc.setFontSize(9.5);
       doc.text(`Active Auto-renewing Subscriptions: ${autopaySubs.length}`, 15, renewY);
       renewY += 4;
@@ -522,18 +544,18 @@ doc.setFont('Roboto', 'normal');
         head: [['Service', 'Renewal Date', 'Cost']],
         body: autopayRows,
         theme: 'grid',
-        headStyles: { fillColor: [158, 206, 106], textColor: [255, 255, 255] },
-        styles: { fontSize: 8.5, cellPadding: 2 }
+        headStyles: { font: 'Roboto', fillColor: [158, 206, 106], textColor: [255, 255, 255] },
+        styles: { font: 'Roboto', fontSize: 8.5, cellPadding: 2 }
       });
 
       // CouponSummary section
       const nextY2 = doc.lastAutoTable.finalY + 8;
       doc.setTextColor(13, 14, 18);
-      doc.setFont('helvetica', 'bold');
+      doc.setFont('Roboto', 'bold');
       doc.setFontSize(11);
       doc.text('Coupon Vault summary', 15, nextY2);
 
-      doc.setFont('helvetica', 'normal');
+      doc.setFont('Roboto', 'normal');
       doc.setFontSize(9.5);
       doc.text(`Total Coupons: ${coupons.length}  |  Active: ${activeCoupons}  |  Expiring (7 days): ${expiringCoupons}`, 15, nextY2 + 5.5);
 
@@ -559,9 +581,41 @@ doc.setFont('Roboto', 'normal');
         head: [['Coupon Code', 'Discount', 'Expiry Date']],
         body: couponRows,
         theme: 'grid',
-        headStyles: { fillColor: [86, 95, 137], textColor: [255, 255, 255] },
-        styles: { fontSize: 8.5, cellPadding: 2 }
+        headStyles: { font: 'Roboto', fillColor: [86, 95, 137], textColor: [255, 255, 255] },
+        styles: { font: 'Roboto', fontSize: 8.5, cellPadding: 2 }
       });
+
+      // ── PAGE 4: AI FINANCIAL INSIGHTS ──
+      doc.addPage();
+
+      // Page header
+      doc.setFillColor(122, 162, 247);
+      doc.rect(0, 0, 210, 12, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('Roboto', 'bold');
+      doc.setFontSize(9);
+      doc.text('SUBLY MONTHLY SUBSCRIPTION REPORT', 15, 8);
+
+      // Section title
+      doc.setTextColor(13, 14, 18);
+      doc.setFont('Roboto', 'bold');
+      doc.setFontSize(12);
+      doc.text('AI Financial Insights', 15, 22);
+
+      // Render the AI summary text
+      doc.setFont('Roboto', 'normal');
+      doc.setFontSize(9.5);
+      doc.setTextColor(50, 50, 50);
+
+      const splitText = doc.splitTextToSize(aiSummary, 170);
+      const textHeight = (splitText.length * 5) + 12; // ~5mm per line + padding
+      
+      // Background card tint box
+      doc.setFillColor(248, 249, 253);
+      doc.setDrawColor(224, 230, 255);
+      doc.rect(15, 26, 180, textHeight, 'FD');
+      
+      doc.text(splitText, 20, 33);
 
       doc.save('Subly_Monthly_Subscription_Report.pdf');
     } catch (err) {
@@ -618,6 +672,31 @@ doc.setFont('Roboto', 'normal');
             <h2>PDF Summary</h2>
           </div>
           <p>A beautifully formatted PDF document showing charts, spending breakdowns, and upcoming renewals.</p>
+          
+          <div style={{ margin: '1rem 0 1.25rem 0', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <label style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+              Comparison Period for AI Insights:
+            </label>
+            <select
+              value={comparisonPeriod}
+              onChange={(e) => setComparisonPeriod(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '0.625rem',
+                background: 'var(--surface-raised)',
+                border: '1px solid var(--border-heavy)',
+                borderRadius: 'var(--radius-md)',
+                color: 'var(--text-primary)',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="last_month">Last Month</option>
+              <option value="last_3_months">Last 3 Months Average</option>
+              <option value="last_year">Last Year Average</option>
+            </select>
+          </div>
+
           <button 
             onClick={handleGeneratePDF} 
             disabled={generating} 

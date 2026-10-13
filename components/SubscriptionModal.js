@@ -62,13 +62,18 @@ export default function SubscriptionModal({ subscription, onClose, onSave }) {
 
   const [error, setError] = useState(null);
 
-  // ── Initialise form data ──────────────────────────────────────────────────
   useEffect(() => {
     setMounted(true);
 
     if (subscription) {
       setFormData({
-        ...subscription,
+        name: subscription.name || '',
+        category: subscription.category || 'Entertainment',
+        cost: subscription.cost !== null && subscription.cost !== undefined ? subscription.cost : '',
+        billingCycle: subscription.billingCycle || 'monthly',
+        renewalDate: subscription.renewalDate || '',
+        url: subscription.url || '',
+        notes: subscription.notes || '',
         autopayEnabled: subscription.autopayEnabled ?? false,
       });
 
@@ -84,11 +89,16 @@ export default function SubscriptionModal({ subscription, onClose, onSave }) {
     } else {
       const d = new Date();
       d.setMonth(d.getMonth() + 1);
-      setFormData(prev => ({
-        ...prev,
+      setFormData({
+        name: '',
+        category: 'Entertainment',
+        cost: '',
+        billingCycle: 'monthly',
         renewalDate: d.toISOString().split('T')[0],
+        url: '',
+        notes: '',
         autopayEnabled: false,
-      }));
+      });
     }
   }, [subscription]);
 
@@ -113,7 +123,7 @@ export default function SubscriptionModal({ subscription, onClose, onSave }) {
     setError(null);
 
     try {
-      const isEditing = !!subscription;
+      const isEditing = !!(subscription && subscription.id);
       const url    = isEditing ? `/api/subscriptions/${subscription.id}` : '/api/subscriptions';
       const method = isEditing ? 'PUT' : 'POST';
 
@@ -155,7 +165,7 @@ export default function SubscriptionModal({ subscription, onClose, onSave }) {
       <div className={styles.overlay} style={{ zIndex: 9999 }}>
         <div className={`${styles.modal} ${couponStyles.modal}`}>
           <div className={styles.header}>
-            <h2>{subscription ? 'Edit Subscription' : 'Add Subscription'}</h2>
+            <h2>{subscription && subscription.id ? 'Edit Subscription' : 'Add Subscription'}</h2>
             <button type="button" onClick={onClose} className={styles.closeBtn}>&times;</button>
           </div>
 
@@ -342,7 +352,7 @@ export default function SubscriptionModal({ subscription, onClose, onSave }) {
             <div className={styles.footer}>
               <button type="button" onClick={onClose} className={styles.cancelBtn}>Cancel</button>
               <button type="submit" className={styles.submitBtn}>
-                {subscription ? 'Save Changes' : 'Add Subscription'}
+                {subscription && subscription.id ? 'Save Changes' : 'Add Subscription'}
               </button>
             </div>
           </form>

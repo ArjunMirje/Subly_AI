@@ -13,7 +13,7 @@ import { parseJsonResponse } from '@/lib/api-client';
  *  onSave   – callback after a successful save (refreshes the list)
  */
 export default function CouponModal({ coupon = null, onClose, onSave }) {
-  const isEditing = !!coupon;
+  const isEditing = !!(coupon && coupon.id);
 
   const [mounted, setMounted] = useState(false);
   const [formData, setFormData] = useState({

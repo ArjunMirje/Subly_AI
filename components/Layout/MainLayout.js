@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, WalletCards, Tags, BarChart3, FileText, Bell, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, WalletCards, Tags, BarChart3, FileText, Bell, LogOut, Menu, X, Bot } from 'lucide-react';
 import styles from './MainLayout.module.css';
 import { useState, useEffect, useRef } from 'react';
 import SubscriptionModal from '@/components/SubscriptionModal';
@@ -11,6 +11,7 @@ import { parseJsonResponse } from '@/lib/api-client';
 
 const NavigationLinks = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/subbot', label: 'SubBot', icon: Bot },
   { href: '/subscriptions', label: 'Subscriptions', icon: WalletCards },
   { href: '/coupons', label: 'Coupons', icon: Tags },
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
